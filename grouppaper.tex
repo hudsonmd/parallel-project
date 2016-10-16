@@ -47,7 +47,7 @@
 \normalfont \normalsize 
 \textsc{project for CS388P: Parallel Algorithms (Fall 2016)} 
 \horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
-\huge We Want More Time and Less Work \\ % Write your project title here
+\huge Prioritizing processor efficiency over time efficiency \\ % Write your project title here
 \horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
 }
 
@@ -66,8 +66,9 @@
 \textbf{Abstract}
 
 \begin{abstract}
-Our paper is \textit{Time-Work Tradeoffs for Parallel Algorithms}, \textit{Spencer\cite{S97}}. The high-level idea that serves as the theme of \textit{Spencer\cite{S97}} is the observation that there exists algorithms with the property that the amount of work they perform is inversely related to the amount of time they take. In particular, \textit{Spencer\cite{S97}} discusses the following problems:
+Our paper is \textit{Time-Work Tradeoffs for Parallel Algorithms}, \textit{Spencer\cite{S97}}. In this paper, Spencer focuses on several open parallel problems that are affected by the transitive closure bottleneck. For each of the below problems, Spencer describes an algorithm that comes closer to work efficiency than existing approaches that utilize transitive closure. However, this increased work efficiency comes at the cost of an asymptotic increase in the span of each algorithm relative to the time optimal solution. Spencer's motivation for prioritizing work efficiency over time efficiency stems from the fact that existing transitive closure solutions to these problems perform significantly worse than their sequential counterparts when run on only a single processor.
 
+\underline{Problems}
 \begin{itemize}
 \item Solving Triangular Systems of Linear Equations
 \item Topological Sort
@@ -76,8 +77,7 @@ Our paper is \textit{Time-Work Tradeoffs for Parallel Algorithms}, \textit{Spenc
 \item Single Source Shortest Path
 \end{itemize}
 
-In particular, it presents a few new list data structures called \textit{nearby lists}, \textit{frontier lists}, \textit{inverse nearby lists}, and \textit{inverse frontier lists} that provide the necessary bookkeeping for the subsequent algorithms to be presented. \\
-\textbf{\textit{/* Note to Matt: I may have omitted stuff from your parts. For example, stuff related to probability. If you think we should add anything here, please do so. */}}
+Rather than using a matrix based approach, Spencer utilizes a few new data structures called \textit{nearby lists}, \textit{frontier lists}, \textit{inverse nearby lists}, and \textit{inverse frontier lists} that provide the necessary bookkeeping for the subsequent algorithms. \\
 
 \end{abstract}
 
