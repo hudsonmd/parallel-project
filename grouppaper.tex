@@ -179,7 +179,7 @@ Walter Xia will first present \textit{Rtopo} from \textit{Spencer\cite{S97}} and
 
 \textit{Lemma 4.2:} At least $min(\rho,n)$ vertices become known during each execution on the main loop of \textit{pbfs}.\\
 
-\textit{Theorem 4.3:} The algorithm \textit{bpfs} computes the distance from $s$ to every other vertex in $O(\frac{n}{\rho}\log^2{\rho})$ time and does $O(m\log{p} + n\rho^2\log^2{\rho})$ work.\\
+\textit{Theorem 4.3:} The algorithm \textit{pbfs} computes the distance from $s$ to every other vertex in $O(\frac{n}{\rho}\log^2{\rho})$ time and does $O(m\log{p} + n\rho^2\log^2{\rho})$ work.\\
 
 If time permits, Walter Xia will also present \textit{pbfs} from \textit{Spencer\cite{S97}} and establish \textit{Theorem 3.4}. To this end, we will present \textit{Lemma 4.1} and \textit{4.2}. This algorithm is not as critical since it's techniques are very similar to that of \textit{Rtopo}.
 
@@ -189,7 +189,7 @@ If time permits, Walter Xia will also present \textit{pbfs} from \textit{Spencer
 
 \section{Further Research Directions}
 \textbf{\textit{/* Note: We may want to add to this. */}}\\
-\textit{Spencer\cite{S97}} suggested that it would be nice to have deterministic rather than probabilistic parallel algorithms that can solve strongly connected components and single source shortest paths. \textit{Karp-Ramachandran\cite{KR90}} gave a list of open problems that we currently do not know how to solve in parallel which included directed and  undirected depth first search. We believe the real interesting question is whether we can forego transitive closure as a subroutine when dealing with problems involving graphs.
+\textit{Spencer\cite{S97}} and \texit{Ullman\citep{UY91}} suggested that the existence of deterministic rather than probabilistic parallel algorithms that can solve strongly connected components and single source shortest paths remains an open question. \textit{Karp-Ramachandran\cite{KR90}} gave a list of open problems which Spencer did not approach that we currently do not know how to solve efficiently in parallel and have not been able to categorize into a "Complete" category, which included directed and  undirected depth first search. We believe the real interesting question is whether we can forego transitive closure as a subroutine when dealing with problems involving graphs while maintaining time optimality.
 
 
 
