@@ -86,7 +86,7 @@ Rather than using a matrix based approach, Spencer utilizes a new data structure
 
 \section{Introduction}
 
-\textit{Spencer\cite{S97}} focuses on problems for which we known of no work-time efficient parallel algorithms that provide a solution. That is, there are no known parallel algorithms that are able to solve any of the following probelems within a logarithmic factor of the fastest sequential algorithm's work, where work is the product of the running time and the processor count. For the following problems, which were presented in \textit{Karp-Ramachandran\cite{KR90}}, \textit{Spencer\cite{S97}} develops parallel algorithms with a better work efficiency than transitive closure based methods:
+\textit{Spencer\cite{S97}} focuses on problems for which we known of no work-time efficient parallel algorithms that provide a solution. That is, there are no known parallel algorithms that are able to solve any of the following problems within a logarithmic factor of the fastest sequential algorithm's work, where work is the product of the running time and the processor count. For the following problems, which were presented in \textit{Karp-Ramachandran\cite{KR90}}, \textit{Spencer\cite{S97}} develops parallel algorithms with a better work efficiency than transitive closure based methods:
 
 \begin{itemize}
 \item Directed Spanning Tree
@@ -127,15 +127,21 @@ Let $G = (V,E)$, $m = |E|$, and $n = |V|$. The major contributions of \textit{Sp
 
 \textit{Definition.} The \textit{nearby list}, $NL(v)$, of a vertex $v$ consists of ordered pairs $(u, d(v,u))$ where $u$ is a vertex reachable from $v$ and $d(v,u)$ is the distance from $v$ to $u$.\\
 
+
+
 \textit{Definition.} A vertex $v$ is \textit{terminal} if $r(v)$, the nearby radius of $v$, is infinite and $NL(v)$ contains all reachable vertices from $v$. A vertex $v$ is \textit{totally terminal} if $v$ is terminal and all vertices in $NL(v)$ is terminal.\\
 
 In solving topological sort, \textit{Spencer\cite{S97}} actually solves the reverse topological sort which can be easily converted to a topological sort by replacing $w(v)$ with $n + 1 - w(v)$, where $w(v)$ is the label given by the reverse topological sort. \textit{Karp-Ramachandran\cite{KR90}} presented an algorithm that can compute this topological sort in $O(\log^2{n})$ time and $O(n^3\log{n})$ work by computing the transitive closure, $G^*$, of $G$. \textit{Spencer\cite{S97}} introduces an algorithm, \textit{Rtopo}, that performs less work by computing parts of $G^*$ instead of the whole thing. This is achieved by the nearby list data structure, whose size is controlled by the parameter $\rho$. The smallest $w(v)$ is assigned to the totally terminal vertices, and the nearby lists are updated to expose newly formed totally terminal vertices. The details of which we omit here.\\   
 
 \textit{Definition.} A vertex $v$ is \textit{known} iff the distance from $s$ to $v$ is at most $R_k$, the known radius.\\
 
-In solving breadth first search, \textit{Spencer\cite{S97}} employs a very similar algorithm to \textit{Rotpo} called \textit{pbfs}. Again, there exists a parallel algorithm that can solve breadth first search in $O(\log^2{n})$ time and $O(n^3\log{n})$ work by calculating the transitive closure $G^*$. \textit{pbfs} reduced the work by deleting vertices from $G_u$, the unknown graph consisting of unknown vertices, once it has been known. All the techniques developed for \textit{Rtopo} are applicable to \textit{bpfs}. 
+In solving breadth first search, \textit{Spencer\cite{S97}} employs a very similar algorithm to \textit{Rotpo} called \textit{pbfs}. Again, there exists a parallel algorithm that can solve breadth first search in $O(\log^2{n})$ time and $O(n^3\log{n})$ work by calculating the transitive closure $G^*$. \textit{pbfs} reduced the work by deleting vertices from $G_u$, the unknown graph consisting of unknown vertices, once it has been known. All the techniques developed for \textit{Rtopo} are applicable to \textit{bpfs}. \\
 
-In solving strongly connected components, Spencer again utilizes pbfs. The algorithm utilizes divide and conquer in order to separate subsets of strongly connected components and subgraphs of nodes which have not yet been placed in a strongly connected component. He first applies a procedure called "split" which utilizes uniform randomness to select a strongly connected component to separate from a newly added subgraph, then recursively calls his algorithm on each of the induced subgraphs.
+\textit{Definition.} A Las Vegas algorithm is a probabilistic algorithm which can detect when it has made a mistake and try again, thereby guaranteeing a correct solution.\\
+
+\textit{Definition.} A vertex $v$ is \textit{big} iff it reaches more than \textit{$\frac{n}{8}$} vertices, otherwise the vertex is small.\\
+
+In solving strongly connected components, Spencer again utilizes pbfs. The algorithm utilizes divide and conquer in order to separate subsets of SCC's and subgraphs of nodes which have not yet been placed in a SCC. He first applies a procedure called "split" which removes any fully explored SCC's, where utilizes uniform randomness to select a node v in one of the subgraphs in order to compute its SCC and then separates the nodes which were reachable from v but not in its SCC by adding these nodes to a new subgraph for further processing. At this point, Spencer's algorithm utilizes the divide and conquer technique by recursively calling itself on each of the induced subgraphs until all of the SCC's have been found. Although this solution is correct with high probability, before termination, Spencer utilizes \textit{Ullman's\cite{U91}} method of verifying the SCC's and rerunning the algorithm if the the verification fails in order to transform his algorithm into a Las Vegas Algorithm. Since the true running time of the algorithm is probabilistic, Spencer utilizes a distinction between "large" and "small" vertices along with Chebyshev's Inequality to lower bound the probability of success by a constant factor, thereby allowing him to treat the necessary number of repeated runs as a constant and absorbing this factor into the big O.With these bounds in place,the algorithm has an expected $O(\frac{n}{\rho}*log^2(\rho)*log(n))$ running time and $O(n\rho^2\log^2{\rho}\log{n})$ expected work.  \\
 
 In solving Single Source Shortest Paths, Spencer employs a method very similar to pbfs, but adds additional complexity in order to account for the edge weights.
 
