@@ -99,15 +99,6 @@ Rather than using a matrix based approach, Spencer utilizes a new data structure
 
 Spencer's motivation for prioritizing work efficiency over time efficiency stems from the fact that existing parallel transitive closure algorithms for these problems perform significantly worse than their sequential counterparts when run on only a single processor. In an effort to reduce this problem, Spencer's algorithms exhibit a time-work trade-off, that is, the longer they are allowed to run, the less overall work they perform. This phenomenon exists due of the fact that certain speculative computations can be eliminated as time progresses, thus reducing overall work. The first full algorithm which Spencer presents solves topological sort, while the second algorithm solves breadth first search. It was mentioned in passing that the breadth first search algorithm can solve directed spanning trees and the topological sort algorithm can solve cycle detection for directed graphs. Furthermore, Spencer expands upon the breadth first search algorithm  by utilizing it to find strongly connected components and extending his breadth first search methods to support non-negative edge weights so as to solve the single source shortest paths problem.\\ 
 
-\textbf{\textit{/* Note: We may or may not need these definitions here. */}}\\
-We next reproduce three definitions given in \textit{Spencer\cite{S97}}:\\
-
-\textit{Definition.} A vertex $v$ \textit{reaches} a vertex $u$ iff there is a path from $v$ to $u$. Conversely, $u$ is \textit{reachable} from $v$ iff there is path from $v$ to $u$.\\
-
-\textit{Definition.} Let $G = (V, E)$ be a graph and let $R \subseteq V$. $G[R] = (R, E')$, where $E' \subseteq R \times R$.\\
-
-\textit{Definition.} Two vertices $u,v$ are \textit{identified} by replacing them with a single vertex $uv$. The outgoing edges of both $u$ and $v$ becomes the outgoing edges of $uv$ and the incoming edges of both $u$ and $v$ become the incoming edges of $uv$.
-
 %----------------------------------------------------------------------------------------
 %	RESULTS
 %----------------------------------------------------------------------------------------
@@ -125,7 +116,7 @@ Let $G = (V,E)$, $m = |E|$, and $n = |V|$. The major contributions of \textit{Sp
 \subsection{Techniques}
 \hfill
 
-\textit{Definition.} The \textit{nearby list}, $NL(v)$, of a vertex $v$ consists of ordered pairs $(u, d(v,u))$ where $u$ is a vertex reachable from $v$ and $d(v,u)$ is the distance from $v$ to $u$.\\
+\textit{Definition.} The \textit{nearby list}, $NL(v)$, of a vertex $v$ consists of ordered pairs $(u, d(v,u))$ where $u$ is a vertex reachable from $v$ and $d(v,u)$ is the distance from $v$ to $u$.
 
 \textit{Definition.} A vertex $v$ is \textit{terminal} if $r(v)$, the nearby radius of $v$, is infinite and $NL(v)$ contains all reachable vertices from $v$. A vertex $v$ is \textit{totally terminal} if $v$ is terminal and all vertices in $NL(v)$ is terminal.\\
 
@@ -135,13 +126,15 @@ In solving topological sort, \textit{Spencer\cite{S97}} actually solves the reve
 
 In solving breadth first search, \textit{Spencer\cite{S97}} employs a very similar algorithm to \textit{Rotpo} called \textit{pbfs}. Again, there exists a parallel algorithm that can solve breadth first search in $O(\log^2{n})$ time and $O(n^3\log{n})$ work by calculating the transitive closure $G^*$. \textit{pbfs} reduced the work by deleting vertices from $G_u$, the unknown graph consisting of unknown vertices, once it has been known. All the techniques developed for \textit{Rtopo} are applicable to \textit{bpfs}. \\ 
 
-\textit{Definition.} A Las Vegas algorithm is a probabilistic algorithm which can detect when it has made a mistake and try again, thereby guaranteeing a correct solution.\\ 
+\textit{Definition.} A Las Vegas algorithm is a probabilistic algorithm which can detect when it has made a mistake and try again, thereby guaranteeing a correct solution.
 
 \textit{Definition.} A vertex $v$ is \textit{big} iff it reaches more than \textit{$\frac{n}{8}$} vertices, otherwise the vertex is small.\\ 
 
 In solving strongly connected components, Spencer again utilizes pbfs. The algorithm utilizes divide and conquer in order to separate subsets of SCC's and subgraphs of nodes which have not yet been placed in a SCC. He first applies a procedure called "split" which removes any fully explored SCC's, where he utilizes uniform randomness to select a node v in one of the subgraphs in order to compute its SCC and then separates the nodes which were reachable from v but not in its SCC by adding these nodes to a new subgraph for further processing. At this point, Spencer's algorithm utilizes the divide and conquer technique by recursively calling itself on each of the induced subgraphs until all of the SCC's have been found. Although this solution is correct with high probability, before termination, Spencer utilizes \textit{Ullman's\cite{UY91}} method of verifying the SCC's and rerunning the algorithm if the the verification fails in order to transform his algorithm into a Las Vegas Algorithm. Since the true running time of the algorithm is probabilistic, Spencer utilizes a distinction between "large" and "small" vertices along with Chebyshev's Inequality to lower bound the probability of success by a constant factor, thereby allowing him to treat the necessary number of repeated runs as a constant and absorbing this factor into the big O. With these bounds in place, the algorithm has an expected $O(\frac{n}{\rho}*log^2(\rho)*log(n))$ running time and $O(n\rho^2\log^2{\rho}\log{n})$ expected work.  \\ 
 
-\textit{Definition.} A frontier $F(v)$ is \textit{small} iff $|F(v)|\le\rho$.\\ 
+\textit{Definition.} The \textit{rank} of a vertex $v$ is $log_2(r(v))$.
+
+\textit{Definition.} A textit{frontier} $F(v)$ is \textit{small} iff $|F(v)|\le\rho$.\\ 
 
 In solving Single Source Shortest Paths, Spencer employs a method very similar to pbfs, but adds additional complexity in order to account for the edge weights. The primary modifications involve modifying the nearby list invariants to be more general by increasing the range of edge weights checked before a nearby list is guaranteed to be full, introducing the idea of small nearby and frontier lists, and utilizing a safe radius whose value is determined by both the radius and estimated distance rather than simply doubling the radius each iteration. In order to manage these safe radii effectively, Spencer draws upon \textit{Paul's\cite{P83}} description of efficient operations for 2-3 trees that take $O(logn+logk)$ time, where k is the number of elements to be inserted, deleted, searched for, etc. In addition, since the longest path can now be affected by edge weights, this modification of pbfs can no longer rely upon the longest possible path being bound by $m$ and takes on a factor of L, the length of the longest edge, into multiple steps of the algorithm which ultimately impact the span and work. With these modifications, SSSP runs in  $O(\frac{n}{\rho}\log{n}\log{(L\rho)})$ time and $O(n\rho^2(\log{n} + \log{(L\rho)}\log{\rho}) + m(\log{n} + \log{(L\rho)}))$ work when $\log{(L\rho)} <= \rho <= n$.
 
@@ -167,39 +160,38 @@ The three most centrally related papers to \textit{Spencer\cite{S97}} are:  \tex
 \section{Presentation Topics}
 \hfill
 
-\textit{Lemma 3.1.2:} There are at least $min(\rho,n)$ totally terminal vertices.\\
+\textit{Lemma 3.1.2:} There are at least $min(\rho,n)$ totally terminal vertices.
 
-\textit{Lemma 3.2.3:} If $NL(v)$ is eligible, then $expand(v)$ requires $O(\log{\rho})$ time and $O(\rho^2\log{\rho})$ work.\\
+\textit{Lemma 3.2.3:} If $NL(v)$ is eligible, then $expand(v)$ requires $O(\log{\rho})$ time and $O(\rho^2\log{\rho})$ work.
 
-\textit{Lemma 3.2.6:} After the expansion process, the nearby lists satisfy their invariants.\\
+\textit{Lemma 3.2.6:} After the expansion process, the nearby lists satisfy their invariants.
 
 \textit{Theorem 3.3.4:} The algorithm \textit{Rtopo} finds a reverse topological numbering of a directed acyclic graph in $O(\frac{n}{\rho}\log^2{\rho})$ time and does only $O(m\log{\rho} + n\rho^2\log{\rho})$ work.\\
 
 Walter Xia will first present \textit{Rtopo} from \textit{Spencer\cite{S97}} and establish \textit{Theorem 3.3.4}. To this end, we present \textit{Lemma 3.2.3} which will be used to establish \textit{Lemma 3.2.6}. Finally, we use \textit{Lemma 3.2.6} and \textit{Lemma 3.1.2} to establish the theorem. We will avoid presenting the work bounds of \textit{Rtopo} in detail since it requires a discussion of bookkeeping details that distracts from the presentation.\\
 
-\textit{Lemma 4.1:} The procedure \textit{explore} calculates the distance from $s$ to every vertex $v$ such that $R_k \leq d(v,s) \leq R_k + \Delta{R}$.\\
+\textit{Lemma 4.1:} The procedure \textit{explore} calculates the distance from $s$ to every vertex $v$ such that $R_k \leq d(v,s) \leq R_k + \Delta{R}$.
 
-\textit{Lemma 4.2:} At least $min(\rho,n)$ vertices become known during each execution on the main loop of \textit{pbfs}.\\
+\textit{Lemma 4.2:} At least $min(\rho,n)$ vertices become known during each execution on the main loop of \textit{pbfs}.
 
 \textit{Theorem 4.3:} The algorithm \textit{pbfs} computes the distance from $s$ to every other vertex in $O(\frac{n}{\rho}\log^2{\rho})$ time and does $O(m\log{p} + n\rho^2\log^2{\rho})$ work.\\
 
 If time permits, Walter Xia will also present \textit{pbfs} from \textit{Spencer\cite{S97}} and establish \textit{Theorem 3.4}. To this end, we will present \textit{Lemma 4.1} and \textit{4.2}. This algorithm is not as critical since it's techniques are very similar to that of \textit{Rtopo}.\\
 
-10 : Definition 3.2.4. The rank of a vertex v is log2(r(v)).\\
-
 Matthew Hudson will first give a high level presentation on \textit{Spencer's\cite{S97}} algorithm for finding Strongly Connected Components in order and how he utilizes \textit{Ullman's\cite{UY91}} Las Vegas Verifier in order to guarantee a correct solution.\\
 
-Lemma 6.1.1\\
+\textit{Lemma 6.1.1}: After each iteration of the loop in step (1a) all vertices $u$ within
+$s(v)$ of $s$ become known and their distances from $s$ are stored in $d^1(s, u)$.
 
-Lemma 6.1.2\\
+\textit{Lemma 6.1.2}: At least $r$ vertices become known during each execution of step
+(1a) unless at the end of the step all vertices reachable from $s$ have been found.
 
-Lemma 6.1.3\\
+\textit{Lemma 6.1.3}: One execution of step (1a) requires $O(logn*log(\rho{}L))$ time. The
+total work required by all executions of step (1a) is $O(n*\rho*2logn+mlogn+n+log(\rho{}L)logn)$.
 
-Lemma 6.2.1\\
+\textit{Lemma 6.2.2}: After the nearby lists have been updated, either $NL(v)$ contains all vertices reachable from $v$, or there are at least $\rho$ verticies within $4r(v)$ of $v$.
 
-Lemma 6.2.2\\
-
-Theorem 6.3.1\\
+\textit{Theorem 6.3.1}: The procedure SSSP described above solves the single source shortest path problem in $O(\frac{n}{\rho{}}*logn*log(\rho{}L))$ time while doing $O(n\rho{}^2(logn+log(\rho{}L)log\rho{})+m(logn+log(\rho{}L)))$ work provided that $log(\rho{}L)\le \rho{}\le n$\\
 
 Afterwards, Matthew Hudson will present \textit{Spencer's\cite{S97}} algorithm for Single Source Shortest Paths and establish Theorem 6.3.1. In order to do so, we will present Lemmas 6.1.1-6.1.3 as well as Lemma 6.2.2. If time permits, we will also discuss \textit{Spencer's\cite{S97}} method for finding eligible vertices, however, the methods involved already appeared in Rtopo and pbfs in more basic forms, so this section is not critical for the presentation.
 
@@ -208,7 +200,6 @@ Afterwards, Matthew Hudson will present \textit{Spencer's\cite{S97}} algorithm f
 %----------------------------------------------------------------------------------------
 
 \section{Further Research Directions}
-\textbf{\textit{/* Note: We may want to add to this. */}}\\
 \textit{Spencer\cite{S97}} and \textit{Ullman\cite{UY91}} suggested that the existence of deterministic rather than probabilistic parallel algorithms that can solve strongly connected components and single source shortest paths remains an open question. \textit{Karp-Ramachandran\cite{KR90}} gave a list of open problems which Spencer did not approach that we currently do not know how to solve efficiently in parallel and have not been able to categorize into a "Complete" category, which included directed and  undirected depth first search. We believe the real interesting question is whether we can forego transitive closure as a subroutine when dealing with problems involving graphs while maintaining time optimality.
 
 
